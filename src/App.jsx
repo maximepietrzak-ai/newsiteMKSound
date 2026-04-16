@@ -212,7 +212,7 @@ function VideoHero() {
             <Reveal delay={2}>
               <p style={{ fontSize: 17, color: "#525252", lineHeight: 1.7, marginBottom: 40, maxWidth: 480 }}>
                 Mariages, anniversaires, soirées privées —{" "}
-                <span style={{ color: "#A1A1AA" }}>MK Évènementiel</span>{" "}
+                <span style={{ color: "#A1A1AA" }}>MK Sound</span>{" "}
                 crée l'ambiance qui vous ressemble dans le Pas-de-Calais et les Hauts-de-France.
               </p>
             </Reveal>
@@ -250,7 +250,7 @@ function VideoHero() {
                   <iframe
                     style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
                     src="https://www.youtube.com/embed/__PGkM1oaX0"
-                    title="MK Évènementiel — Aperçu"
+                    title="MK Sound — Aperçu"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                   />
@@ -724,7 +724,7 @@ function Footer() {
       <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
         <Logo small />
         <p style={{ fontSize: 13, color: "#3F3F46" }}>DJ & animation événementielle — Pas-de-Calais & Hauts-de-France</p>
-        <p style={{ fontSize: 12, color: "#27272A" }}>© {new Date().getFullYear()} MK Évènementiel</p>
+        <p style={{ fontSize: 12, color: "#27272A" }}>© {new Date().getFullYear()} MK Sound</p>
       </div>
     </footer>
   );
