@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" width="420" height="120">
+
+  <!-- Fond sombre global — logo pensé pour dark bg -->
+  <rect width="420" height="120" rx="18" fill="#0D0820"/>
+
+  <!-- Badge EQ — icône mark -->
+  <!-- Barres EQ avec dégradé violet -->
+  <rect x="20" y="72" width="12" height="28" rx="4" fill="#5B21B6" opacity="0.55"/>
+  <rect x="36" y="52" width="12" height="48" rx="4" fill="#7C3AED" opacity="0.75"/>
+  <rect x="52" y="26" width="12" height="74" rx="4" fill="#9B5CF6"/>
+  <rect x="68" y="40" width="12" height="60" rx="4" fill="#8B5CF6" opacity="0.88"/>
+  <rect x="84" y="58" width="12" height="42" rx="4" fill="#7C3AED" opacity="0.70"/>
+  <rect x="100" y="76" width="12" height="24" rx="4" fill="#6D28D9" opacity="0.50"/>
+
+  <!-- Point accent lumineux sur la barre centrale -->
+  <circle cx="58" cy="20" r="5" fill="#C4B5FD"/>
+
+  <!-- Ligne verticale séparatrice -->
+  <line x1="132" y1="20" x2="132" y2="100" stroke="#2D1F5E" stroke-width="1.2"/>
+
+  <!-- MK — bold blanc -->
+  <text
+    x="152"
+    y="82"
+    font-family="'Helvetica Neue', Arial Black, sans-serif"
+    font-weight="900"
+    font-size="66"
+    letter-spacing="-2"
+    fill="#FFFFFF"
+  >MK</text>
+
+  <!-- SOUND — léger, violet, espacé -->
+  <text
+    x="155"
+    y="103"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-weight="300"
+    font-size="15"
+    letter-spacing="9"
+    fill="#9B5CF6"
+  >SOUND</text>
+
+</svg>

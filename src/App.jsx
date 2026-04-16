@@ -61,8 +61,8 @@ function Logo({ small = false }) {
   const w = small ? 110 : 160;
   const h = small ? 42 : 62;
   return (
-    <a href="#" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 260 100" width={w} height={h} style={{ display: "block", overflow: "visible" }}>
+    <a href="#" className="logo-link" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 260 100" width={w} height={h} style={{ display: "block", overflow: "visible", maxWidth: "100%" }}>
         <rect width="420" height="120" rx="18" fill="none" />
         <rect x="20" y="72" width="12" height="28" rx="4" fill="#5B21B6" opacity="0.55" />
         <rect x="36" y="52" width="12" height="48" rx="4" fill="#7C3AED" opacity="0.75" />
@@ -119,14 +119,20 @@ function Nav() {
           </div>
         </div>
 
-        {/* Mobile hamburger */}
-        <button onClick={() => setOpen(!open)} className="nav-mobile-btn" aria-label="Menu">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            {open
-              ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
-          </svg>
-        </button>
+        {/* Mobile: CTA + hamburger */}
+        <div className="nav-mobile-actions" style={{ display: "none", alignItems: "center", gap: 12 }}>
+          <button onClick={scrollToContact} className="btn-primary" style={{ padding: "7px 16px", fontSize: 13 }}>
+            Disponibilité
+          </button>
+          <button onClick={() => setOpen(!open)} className="nav-mobile-btn" style={{ display: "block" }} aria-label="Menu">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              {open
+                ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
+            </svg>
+          </button>
+        </div>
+
       </div>
 
       {open && (
@@ -189,7 +195,7 @@ function VideoHero() {
             </Reveal>
 
             <Reveal delay={1}>
-              <h1 style={{
+              <h1 className="hero-title" style={{
                 fontSize: "clamp(44px, 5.5vw, 76px)",
                 fontWeight: 800,
                 color: "#EBEBEF",
@@ -224,9 +230,9 @@ function VideoHero() {
           </div>
 
           {/* Right: phone */}
-          <div style={{ display: "flex", justifyContent: "center", minWidth: 0, alignSelf: "start", marginTop: 0 }}>
+          <div className="hero-phone-col" style={{ display: "flex", justifyContent: "center", minWidth: 0, alignSelf: "start", marginTop: 0 }}>
             <Reveal delay={2}>
-              <div style={{ position: "relative", width: 440, maxWidth: "100%" }}>
+              <div className="hero-phone" style={{ position: "relative", width: 440, maxWidth: "100%" }}>
                 <div style={{
                   position: "absolute", inset: -50, pointerEvents: "none",
                   background: "radial-gradient(circle, rgba(124,58,237,0.22) 0%, transparent 70%)",
@@ -303,25 +309,36 @@ function SocialProof() {
   const stats = [
     { val: 50, suffix: "+", label: "Événements animés" },
     { val: 100, suffix: "%", label: "Clients satisfaits" },
-    { custom: "5 / 5", stars: true, label: "Note Google" },
+    { custom: "5/5", stars: true, label: "Note Google" },
   ];
   return (
     <section style={{ borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)" }}>
+        <div style={{ display: "flex", flexDirection: "column", width: "100%" }} className="stats-wrapper">
           {stats.map((s, i) => (
             <div key={i} style={{
-              padding: "36px 24px",
+              padding: "28px 24px",
               textAlign: "center",
-              borderRight: i < 2 ? "1px solid rgba(255,255,255,0.06)" : "none",
+              borderBottom: i < stats.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
             }}>
-              <div style={{ fontSize: 80, fontWeight: 900, color: "#EBEBEF", letterSpacing: "-0.04em", lineHeight: 1, marginBottom: 4, animation: "pulse 3s ease-in-out infinite" }}>
+              <div style={{
+                fontSize: "clamp(40px, 10vw, 80px)",
+                fontWeight: 900,
+                color: "#EBEBEF",
+                letterSpacing: "-0.04em",
+                lineHeight: 1,
+                whiteSpace: "nowrap",
+              }}>
                 {s.custom ?? <Counter end={s.val} suffix={s.suffix} />}
               </div>
-              {s.stars && (
-                <div style={{ fontSize: 11, color: "#7C3AED", letterSpacing: "2px", marginBottom: 4 }}>★★★★★</div>
-              )}
-              <div style={{ fontSize: 11, color: "#3F3F46", textTransform: "uppercase", letterSpacing: "0.15em", fontWeight: 700 }}>
+              <div style={{
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: "0.15em",
+                color: "rgba(255,255,255,0.4)",
+                marginTop: 8,
+                textTransform: "uppercase",
+              }}>
                 {s.label}
               </div>
             </div>
@@ -512,7 +529,7 @@ function Avis() {
           </div>
         </Reveal>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: "rgba(255,255,255,0.06)", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="reviews-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: "rgba(255,255,255,0.06)", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
           {temoignages.map((t, i) => (
             <Reveal key={t.name} delay={Math.min(i + 1, 4)}>
               <div className="review-cell">
@@ -555,7 +572,7 @@ function Process() {
           </div>
         </Reveal>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+        <div className="process-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
           {steps.map((s, i) => (
             <Reveal key={s.num} delay={i + 1}>
               <div className="process-step" data-first={i === 0 ? "true" : "false"}>

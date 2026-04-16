@@ -132,6 +132,21 @@ body {
   gap: 60px;
 }
 
+/* ── Stats wrapper ───────────────────────────────────────────────────────── */
+@media (min-width: 769px) {
+  .stats-wrapper {
+    flex-direction: row !important;
+  }
+  .stats-wrapper > div {
+    flex: 1;
+    border-bottom: none !important;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .stats-wrapper > div:last-child {
+    border-right: none;
+  }
+}
+
 /* ── Pricing grid ────────────────────────────────────────────────────────── */
 .pricing-grid {
   display: grid;
@@ -323,25 +338,71 @@ input:-webkit-autofill:focus {
 
 /* ── Mobile ──────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .nav-desktop  { display: none; }
+  /* Nav */
+  .nav-desktop  { display: none !important; }
   .nav-mobile-btn { display: block; }
+  .nav-mobile-actions { display: flex !important; }
   .nav-mobile-menu { display: flex; }
 
+  /* Hero */
   .hero-layout {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 40px;
     text-align: center;
   }
   .hero-layout > div:first-child > div[style*="display: flex"] {
     justify-content: center;
   }
 
+  /* Hero title */
+  .hero-title {
+    font-size: clamp(32px, 8vw, 48px) !important;
+  }
+
+  /* Hero phone mockup */
+  .hero-phone {
+    width: 320px !important;
+    max-width: 100% !important;
+    margin: 0 auto;
+  }
+
+  /* Logo */
+  .logo-link {
+    max-width: 140px;
+  }
+
+  /* Section titles */
+  .section-title {
+    font-size: clamp(28px, 7vw, 40px) !important;
+  }
+
+  /* Pricing */
   .pricing-grid { grid-template-columns: 1fr; }
+
+  /* Reviews */
+  .reviews-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .review-cell {
+    padding: 20px;
+  }
+  .review-cell p:first-of-type {
+    font-size: 16px !important;
+  }
+
+  /* Process */
+  .process-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
   .process-step { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
   .process-step:last-child { border-bottom: none; }
-  .sticky-cta { display: block; }
-}
 
-@media (max-width: 480px) {
-  .hero-layout > div[style*="max-width: 560px"] { max-width: 100% !important; }
+  /* Sections padding */
+  section > div {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Sticky CTA */
+  .sticky-cta { display: block; }
 }
