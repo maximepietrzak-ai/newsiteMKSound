@@ -6,24 +6,30 @@ function scrollToContact() {
 }
 
 /* ── SCROLL REVEAL ─────────────────────────────────────────────────────────── */
-function useReveal() {
+function useReveal(delayMs = 0) {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { el.classList.add("visible"); obs.unobserve(el); } },
-      { threshold: 0.08 }
-    );
+    el.style.opacity = "0";
+    el.style.transform = "translateY(32px)";
+    el.style.transition = `opacity 0.7s cubic-bezier(0.16,1,0.3,1) ${delayMs}ms, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delayMs}ms`;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        el.style.opacity = "1";
+        el.style.transform = "translateY(0)";
+        obs.disconnect();
+      }
+    }, { threshold: 0.12 });
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [delayMs]);
   return ref;
 }
 function Reveal({ children, className = "", delay = 0 }) {
-  const ref = useReveal();
+  const ref = useReveal(delay);
   return (
-    <div ref={ref} className={`reveal${delay ? ` reveal-delay-${delay}` : ""} ${className}`}>
+    <div ref={ref} className={className}>
       {children}
     </div>
   );
@@ -288,15 +294,15 @@ function Marquee() {
       borderTop: "1px solid rgba(255,255,255,0.06)",
       borderBottom: "1px solid rgba(255,255,255,0.06)",
       overflow: "hidden",
-      padding: "14px 0",
+      padding: "20px 0",
     }}>
       <div style={{ display: "flex", whiteSpace: "nowrap" }}>
         <span className="marquee-track"
-          style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.15em", color: "rgba(255,255,255,0.25)" }}>
+          style={{ fontSize: 18, fontWeight: 800, letterSpacing: "0.2em", color: "rgba(255,255,255,0.5)" }}>
           {repeated}
         </span>
         <span className="marquee-track" aria-hidden="true"
-          style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.15em", color: "rgba(255,255,255,0.25)" }}>
+          style={{ fontSize: 18, fontWeight: 800, letterSpacing: "0.2em", color: "rgba(255,255,255,0.5)" }}>
           {repeated}
         </span>
       </div>
@@ -383,7 +389,7 @@ function Offres() {
 
         <div className="pricing-grid">
           {packs.map((pack, i) => (
-            <Reveal key={pack.name} delay={i + 1}>
+            <Reveal key={pack.name} delay={i * 120}>
               <div className={`pricing-card${pack.highlighted ? " pricing-card--featured" : ""}`}
                 style={pack.highlighted ? {
                   border: "1px solid #7C3AED",
@@ -471,7 +477,7 @@ function Differenciation() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 1, background: "rgba(255,255,255,0.06)", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
           {points.map((p, i) => (
-            <Reveal key={p.title} delay={i + 1}>
+            <Reveal key={p.title} delay={i * 80}>
               <div className="feature-cell">
                 <div style={{
                   width: 34, height: 34, borderRadius: 8,
@@ -531,7 +537,7 @@ function Avis() {
 
         <div className="reviews-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: "rgba(255,255,255,0.06)", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
           {temoignages.map((t, i) => (
-            <Reveal key={t.name} delay={Math.min(i + 1, 4)}>
+            <Reveal key={t.name} delay={i * 80}>
               <div className="review-cell">
                 <div style={{ display: "flex", gap: 2, marginBottom: 16 }}>
                   {[...Array(5)].map((_, j) => (
@@ -574,7 +580,7 @@ function Process() {
 
         <div className="process-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
           {steps.map((s, i) => (
-            <Reveal key={s.num} delay={i + 1}>
+            <Reveal key={s.num} delay={i * 100}>
               <div className="process-step" data-first={i === 0 ? "true" : "false"}>
                 <p style={{ fontSize: 28, fontWeight: 800, color: "rgba(255,255,255,0.15)", letterSpacing: "-0.04em", lineHeight: 1, marginBottom: 16, userSelect: "none" }}>
                   {s.num}
