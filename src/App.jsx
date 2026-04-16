@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 
 const EVENT_TYPES = ["Mariage", "Anniversaire", "Soirée privée", "Entreprise", "Autre"];
-
-function scrollToForm() {
+function scrollToContact() {
   document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
 }
 
-/* ─────────────── SCROLL REVEAL ────────────────────────── */
+/* ── SCROLL REVEAL ─────────────────────────────────────────────────────────── */
 function useReveal() {
   const ref = useRef(null);
   useEffect(() => {
@@ -14,20 +13,23 @@ function useReveal() {
     if (!el) return;
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) { el.classList.add("visible"); obs.unobserve(el); } },
-      { threshold: 0.12 }
+      { threshold: 0.08 }
     );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
   return ref;
 }
-
 function Reveal({ children, className = "", delay = 0 }) {
   const ref = useReveal();
-  return <div ref={ref} className={`reveal ${delay ? `reveal-delay-${delay}` : ""} ${className}`}>{children}</div>;
+  return (
+    <div ref={ref} className={`reveal${delay ? ` reveal-delay-${delay}` : ""} ${className}`}>
+      {children}
+    </div>
+  );
 }
 
-/* ─────────────── ANIMATED COUNTER ─────────────────────── */
+/* ── ANIMATED COUNTER ──────────────────────────────────────────────────────── */
 function Counter({ end, suffix = "", duration = 2000 }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
@@ -53,40 +55,36 @@ function Counter({ end, suffix = "", duration = 2000 }) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-/* ─────────────────────── LOGO ─────────────────────────── */
-function MKLogo({ size = 36 }) {
+/* ── LOGO ──────────────────────────────────────────────────────────────────── */
+// viewBox crops to actual content bounds (x:10-270, y:10-110) so SOUND is visible at nav size
+function Logo({ small = false }) {
+  const w = small ? 110 : 160;
+  const h = small ? 42 : 62;
   return (
-    <svg width={size} height={size} viewBox="0 0 200 200" fill="none">
-      <defs>
-        <linearGradient id="mkg" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#00F5A0" />
-          <stop offset="1" stopColor="#00D9F5" />
-        </linearGradient>
-      </defs>
-      <rect width="200" height="200" rx="48" fill="url(#mkg)" />
-      <path d="M42 148V62h8l30 48 30-48h8v86h-14V88l-24 38h-2l-24-38v60H42z" fill="#2D2D2D" />
-      <path d="M134 148V62h14v38l32-38h18l-34 40 36 46h-18l-28-36-6 7v29h-14z" fill="#2D2D2D" />
-    </svg>
+    <a href="#" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 260 100" width={w} height={h} style={{ display: "block", overflow: "visible" }}>
+        <rect width="420" height="120" rx="18" fill="none" />
+        <rect x="20" y="72" width="12" height="28" rx="4" fill="#5B21B6" opacity="0.55" />
+        <rect x="36" y="52" width="12" height="48" rx="4" fill="#7C3AED" opacity="0.75" />
+        <rect x="52" y="26" width="12" height="74" rx="4" fill="#9B5CF6" />
+        <rect x="68" y="40" width="12" height="60" rx="4" fill="#8B5CF6" opacity="0.88" />
+        <rect x="84" y="58" width="12" height="42" rx="4" fill="#7C3AED" opacity="0.70" />
+        <rect x="100" y="76" width="12" height="24" rx="4" fill="#6D28D9" opacity="0.50" />
+        <circle cx="58" cy="20" r="5" fill="#C4B5FD" />
+        <line x1="132" y1="20" x2="132" y2="100" stroke="#2D1F5E" strokeWidth="1.2" />
+        <text x="152" y="82" fontFamily="'Helvetica Neue',Arial Black,sans-serif" fontWeight="900" fontSize="66" letterSpacing="-2" fill="#FFFFFF">MK</text>
+        <text x="155" y="103" fontFamily="'Helvetica Neue',Arial,sans-serif" fontWeight="300" fontSize="15" letterSpacing="9" fill="#9B5CF6">SOUND</text>
+      </svg>
+    </a>
   );
 }
 
-/* ──────────────── GRADIENT BUTTON ──────────────────────── */
-function GradientButton({ children, onClick, className = "", type = "button" }) {
-  return (
-    <button type={type} onClick={onClick} className={`relative group overflow-hidden px-8 py-4 rounded-2xl font-bold text-[#2D2D2D] text-lg transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] ${className}`}>
-      <span className="absolute inset-0 bg-gradient-to-r from-[#00F5A0] to-[#00D9F5] animate-gradient" />
-      <span className="absolute -inset-3 bg-gradient-to-r from-[#00F5A0] to-[#00D9F5] opacity-0 group-hover:opacity-40 blur-2xl transition-opacity duration-500 animate-glow rounded-3xl" />
-      <span className="relative z-10 flex items-center justify-center gap-2">{children}</span>
-    </button>
-  );
-}
-
-/* ───────────────────────── NAV ─────────────────────────── */
+/* ── NAV ───────────────────────────────────────────────────────────────────── */
 function Nav() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 20);
+    const h = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", h, { passive: true });
     return () => window.removeEventListener("scroll", h);
   }, []);
@@ -98,36 +96,45 @@ function Nav() {
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-[#2D2D2D]/95 backdrop-blur-xl shadow-lg shadow-black/20 border-b border-white/5" : "bg-transparent"}`}>
-      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
-        <a href="#" className="flex items-center gap-2.5 group">
-          <div className="transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-            <MKLogo size={36} />
+    <nav style={{
+      position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
+      transition: "background 0.3s, border-color 0.3s",
+      background: scrolled ? "rgba(6,7,15,0.88)" : "transparent",
+      backdropFilter: scrolled ? "blur(20px)" : "none",
+      WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
+      borderBottom: `1px solid ${scrolled ? "rgba(255,255,255,0.06)" : "transparent"}`,
+    }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
+        <Logo />
+
+        {/* Desktop */}
+        <div className="nav-desktop">
+          <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+            {links.map(l => (
+              <a key={l.href} href={l.href} className="nav-link">{l.label}</a>
+            ))}
+            <button onClick={scrollToContact} className="btn-primary" style={{ padding: "8px 18px", fontSize: 14 }}>
+              Disponibilité
+            </button>
           </div>
-          <span className="font-bold text-white text-[15px] tracking-tight">MK Évènementiel</span>
-        </a>
-        <div className="hidden md:flex items-center gap-8">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm text-neutral-400 hover:text-white transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-[#00F5A0] after:to-[#00D9F5] after:transition-all hover:after:w-full">
-              {l.label}
-            </a>
-          ))}
-          <button onClick={scrollToForm} className="px-5 py-2.5 bg-gradient-to-r from-[#00F5A0] to-[#00D9F5] text-[#2D2D2D] font-semibold rounded-xl text-sm hover:shadow-lg hover:shadow-[#00F5A0]/20 hover:scale-105 active:scale-95 transition-all">
-            Disponibilité
-          </button>
         </div>
-        <button onClick={() => setOpen(!open)} className="md:hidden p-2 text-neutral-400" aria-label="Menu">
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            {open ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />}
+
+        {/* Mobile hamburger */}
+        <button onClick={() => setOpen(!open)} className="nav-mobile-btn" aria-label="Menu">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            {open
+              ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
           </svg>
         </button>
       </div>
+
       {open && (
-        <div className="md:hidden bg-[#2D2D2D]/95 backdrop-blur-xl border-t border-white/5 px-6 pb-5 pt-3 space-y-3">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block text-sm text-neutral-300 font-medium py-2">{l.label}</a>
+        <div className="nav-mobile-menu">
+          {links.map(l => (
+            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="nav-mobile-link">{l.label}</a>
           ))}
-          <button onClick={() => { setOpen(false); scrollToForm(); }} className="w-full py-3 bg-gradient-to-r from-[#00F5A0] to-[#00D9F5] text-[#2D2D2D] font-semibold rounded-xl text-sm">
+          <button onClick={() => { setOpen(false); scrollToContact(); }} className="btn-primary" style={{ width: "100%", padding: "13px", fontSize: 15, marginTop: 8 }}>
             Vérifier la disponibilité
           </button>
         </div>
@@ -136,166 +143,269 @@ function Nav() {
   );
 }
 
-/* ───────────────────────── HERO ───────────────────────── */
-function Hero() {
+/* ── VIDEO HERO ────────────────────────────────────────────────────────────── */
+function VideoHero() {
   return (
-    <section className="relative min-h-[95vh] flex items-center pt-16 overflow-hidden bg-[#2D2D2D]">
-      {/* Floating gradient blobs */}
-      <div className="absolute top-20 left-[5%] w-[500px] h-[500px] bg-[#00F5A0]/10 rounded-full blur-[120px] animate-float-1" />
-      <div className="absolute top-40 right-[5%] w-[600px] h-[600px] bg-[#00D9F5]/8 rounded-full blur-[140px] animate-float-2" />
-      <div className="absolute bottom-10 left-[40%] w-[400px] h-[400px] bg-[#00F5A0]/5 rounded-full blur-[100px] animate-float-3" />
+    <section id="video-hero" style={{
+      background: "#111218",
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      position: "relative",
+      overflow: "hidden",
+      paddingTop: 72,
+    }}>
+      {/* Grid texture */}
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)",
+        backgroundSize: "80px 80px",
+      }} />
+      {/* Glow */}
+      <div style={{
+        position: "absolute", right: "-80px", top: "50%", transform: "translateY(-50%)",
+        width: 700, height: 700, pointerEvents: "none",
+        background: "radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 65%)",
+      }} />
 
-      {/* Dot grid */}
-      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle, #00F5A0 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 24px", width: "100%", position: "relative", zIndex: 1 }}>
+        <div className="hero-layout">
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 py-20 text-center">
-        <Reveal>
-          <div className="inline-flex items-center gap-2 mb-8 px-5 py-2.5 text-xs font-semibold tracking-wide uppercase rounded-full bg-white/5 text-[#00F5A0] border border-[#00F5A0]/20 backdrop-blur-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00F5A0] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00F5A0]" />
-            </span>
-            DJ événementiel — Pas-de-Calais
+          {/* Left: copy */}
+          <div style={{ minWidth: 0, overflow: "hidden" }}>
+            <Reveal>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "5px 14px", borderRadius: 100,
+                border: "1px solid rgba(155,92,246,0.25)",
+                background: "rgba(124,58,237,0.07)",
+                marginBottom: 32,
+              }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#9B5CF6", display: "block", flexShrink: 0 }} />
+                <span style={{ color: "#A78BFA", fontSize: 12, fontWeight: 500, letterSpacing: "1.5px", textTransform: "uppercase" }}>
+                  DJ événementiel — Pas-de-Calais
+                </span>
+              </div>
+            </Reveal>
+
+            <Reveal delay={1}>
+              <h1 style={{
+                fontSize: "clamp(44px, 5.5vw, 76px)",
+                fontWeight: 800,
+                color: "#EBEBEF",
+                letterSpacing: "-0.03em",
+                lineHeight: 1.0,
+                marginBottom: 24,
+                textShadow: "0 0 80px rgba(255,255,255,0.08)",
+              }}>
+                L'ambiance de vos événements,{" "}
+                <span style={{ color: "#9B5CF6" }}>c'est notre métier</span>
+              </h1>
+            </Reveal>
+
+            <Reveal delay={2}>
+              <p style={{ fontSize: 17, color: "#525252", lineHeight: 1.7, marginBottom: 40, maxWidth: 480 }}>
+                Mariages, anniversaires, soirées privées —{" "}
+                <span style={{ color: "#A1A1AA" }}>MK Évènementiel</span>{" "}
+                crée l'ambiance qui vous ressemble dans le Pas-de-Calais et les Hauts-de-France.
+              </p>
+            </Reveal>
+
+            <Reveal delay={3}>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <button onClick={scrollToContact} className="btn-primary" style={{ padding: "13px 28px", fontSize: 15 }}>
+                  Vérifier la disponibilité
+                </button>
+                <a href="#offres" className="btn-ghost" style={{ padding: "13px 28px", fontSize: 15 }}>
+                  Voir les formules
+                </a>
+              </div>
+            </Reveal>
           </div>
-        </Reveal>
 
-        <Reveal delay={1}>
-          <div className="mb-8">
-            <MKLogo size={80} />
+          {/* Right: phone */}
+          <div style={{ display: "flex", justifyContent: "center", minWidth: 0, alignSelf: "start", marginTop: 0 }}>
+            <Reveal delay={2}>
+              <div style={{ position: "relative", width: 440, maxWidth: "100%" }}>
+                <div style={{
+                  position: "absolute", inset: -50, pointerEvents: "none",
+                  background: "radial-gradient(circle, rgba(124,58,237,0.22) 0%, transparent 70%)",
+                }} />
+                <div style={{
+                  position: "relative",
+                  width: "100%",
+                  aspectRatio: "9 / 16",
+                  borderRadius: 28,
+                  overflow: "hidden",
+                  background: "#0D1020",
+                  border: "1px solid rgba(155,92,246,0.18)",
+                  boxShadow: "0 48px 96px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)",
+                }}>
+                  <iframe
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
+                    src="https://www.youtube.com/embed/__PGkM1oaX0"
+                    title="MK Évènementiel — Aperçu"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+            </Reveal>
           </div>
-        </Reveal>
 
-        <Reveal delay={2}>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
-            L'ambiance de vos événements,
-            <br />
-            <span className="text-gradient-animated">c'est notre métier</span>
-          </h1>
-        </Reveal>
+        </div>
+      </div>
 
-        <Reveal delay={3}>
-          <p className="text-lg sm:text-xl text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Mariages, anniversaires, soirées privées — <span className="text-white font-medium">MK Évènementiel</span> crée
-            l'ambiance qui vous ressemble dans le Pas-de-Calais et les Hauts-de-France.
-          </p>
-        </Reveal>
-
-        <Reveal delay={4}>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <GradientButton onClick={scrollToForm}>
-              Vérifier la disponibilité
-              <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-            </GradientButton>
-            <a href="#offres" className="px-8 py-4 bg-white/5 border border-white/10 text-white font-semibold rounded-2xl text-lg hover:bg-white/10 hover:border-[#00F5A0]/30 transition-all duration-300 text-center backdrop-blur-sm">
-              Voir les formules
-            </a>
-          </div>
-        </Reveal>
+      {/* Scroll dot */}
+      <div style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)" }}>
+        <div style={{
+          width: 24, height: 40,
+          border: "1px solid rgba(255,255,255,0.1)",
+          borderRadius: 100,
+          display: "flex", alignItems: "flex-start", justifyContent: "center",
+          paddingTop: 6,
+        }}>
+          <div style={{ width: 3, height: 6, background: "#7C3AED", borderRadius: 100, animation: "scrollDown 2s ease-in-out infinite" }} />
+        </div>
       </div>
     </section>
   );
 }
 
-/* ──────────────────── PREUVE SOCIALE ──────────────────── */
+/* ── MARQUEE ───────────────────────────────────────────────────────────────── */
+const MARQUEE_TEXT = "DJ ÉVÉNEMENTIEL · MARIAGES · ANNIVERSAIRES · SOIRÉES PRIVÉES · BALS PUBLICS · PAS-DE-CALAIS · ";
+
+function Marquee() {
+  const repeated = MARQUEE_TEXT.repeat(4);
+  return (
+    <div style={{
+      borderTop: "1px solid rgba(255,255,255,0.06)",
+      borderBottom: "1px solid rgba(255,255,255,0.06)",
+      overflow: "hidden",
+      padding: "14px 0",
+    }}>
+      <div style={{ display: "flex", whiteSpace: "nowrap" }}>
+        <span className="marquee-track"
+          style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.15em", color: "rgba(255,255,255,0.25)" }}>
+          {repeated}
+        </span>
+        <span className="marquee-track" aria-hidden="true"
+          style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.15em", color: "rgba(255,255,255,0.25)" }}>
+          {repeated}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ── SOCIAL PROOF ──────────────────────────────────────────────────────────── */
 function SocialProof() {
+  const stats = [
+    { val: 50, suffix: "+", label: "Événements animés" },
+    { val: 100, suffix: "%", label: "Clients satisfaits" },
+    { custom: "5 / 5", stars: true, label: "Note Google" },
+  ];
   return (
-    <section className="bg-[#242424] border-y border-white/5">
-      <div className="max-w-5xl mx-auto px-6 py-14 grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
-        <Reveal>
-          <p className="text-5xl font-extrabold text-white mb-1"><Counter end={50} suffix="+" /></p>
-          <p className="text-neutral-500 text-sm uppercase tracking-wide font-medium">Événements animés</p>
-        </Reveal>
-        <Reveal delay={1}>
-          <p className="text-5xl font-extrabold text-white mb-1"><Counter end={100} suffix="%" /></p>
-          <p className="text-neutral-500 text-sm uppercase tracking-wide font-medium">Clients satisfaits</p>
-        </Reveal>
-        <Reveal delay={2}>
-          <p className="text-5xl font-extrabold text-gradient mb-1">5/5</p>
-          <p className="text-[#00F5A0] text-sm mb-0.5">★★★★★</p>
-          <p className="text-neutral-500 text-sm uppercase tracking-wide font-medium">Note Google</p>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────── VIDÉO ──────────────────────── */
-function Video() {
-  return (
-    <section className="bg-[#2D2D2D] py-24">
-      <div className="max-w-4xl mx-auto px-6">
-        <Reveal>
-          <p className="text-sm font-semibold text-[#00F5A0] uppercase tracking-wider text-center mb-3">Aperçu</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-4">L'ambiance MK en vidéo</h2>
-          <p className="text-neutral-500 text-center mb-12 max-w-xl mx-auto">Un aperçu de ce qu'on fait sur le terrain.</p>
-        </Reveal>
-        <Reveal delay={1}>
-          <div className="relative w-full max-w-xs mx-auto">
-            <div className="absolute -inset-4 bg-gradient-to-r from-[#00F5A0] to-[#00D9F5] rounded-[2rem] opacity-20 blur-2xl animate-glow" />
-            <div className="relative aspect-[9/16] rounded-3xl overflow-hidden bg-[#242424] shadow-2xl ring-1 ring-white/10">
-              <iframe
-                className="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/__PGkM1oaX0"
-                title="MK Évènementiel — Aperçu"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+    <section style={{ borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)" }}>
+          {stats.map((s, i) => (
+            <div key={i} style={{
+              padding: "36px 24px",
+              textAlign: "center",
+              borderRight: i < 2 ? "1px solid rgba(255,255,255,0.06)" : "none",
+            }}>
+              <div style={{ fontSize: 80, fontWeight: 900, color: "#EBEBEF", letterSpacing: "-0.04em", lineHeight: 1, marginBottom: 4, animation: "pulse 3s ease-in-out infinite" }}>
+                {s.custom ?? <Counter end={s.val} suffix={s.suffix} />}
+              </div>
+              {s.stars && (
+                <div style={{ fontSize: 11, color: "#7C3AED", letterSpacing: "2px", marginBottom: 4 }}>★★★★★</div>
+              )}
+              <div style={{ fontSize: 11, color: "#3F3F46", textTransform: "uppercase", letterSpacing: "0.15em", fontWeight: 700 }}>
+                {s.label}
+              </div>
             </div>
-          </div>
-        </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── OFFRES ─────────────────────── */
+/* ── OFFRES ────────────────────────────────────────────────────────────────── */
 function Offres() {
   const packs = [
-    { name: "Essentiel", price: "À partir de 690€", target: "Petites soirées & anniversaires", features: ["DJ professionnel", "Sonorisation adaptée", "Éclairage d'ambiance", "Échange préalable sur vos goûts"], highlighted: false },
-    { name: "Mariage", price: "990€ à 1 290€", target: "Votre jour J, parfaitement orchestré", features: ["DJ + système lumières complet", "Gestion des moments clés", "Préparation musicale sur-mesure", "Coordination avec vos prestataires", "Micro pour discours & animations"], highlighted: true, badge: "Le plus demandé" },
-    { name: "Sur-Mesure", price: "À partir de 1 490€", target: "L'expérience complète & immersive", features: ["Tout le pack Mariage inclus", "Son & lumières haut de gamme", "Effets scéniques (fumée, LED, laser)", "DJ set prolongé", "Installation & démontage complets"], highlighted: false },
+    {
+      name: "Essentiel",
+      target: "Petites soirées & anniversaires",
+      features: ["DJ professionnel", "Sonorisation adaptée", "Éclairage d'ambiance", "Échange préalable sur vos goûts"],
+    },
+    {
+      name: "Mariage",
+      target: "Votre jour J, parfaitement orchestré",
+      features: ["DJ + système lumières complet", "Gestion des moments clés", "Préparation musicale sur-mesure", "Coordination avec vos prestataires", "Micro pour discours & animations"],
+      highlighted: true,
+      badge: "Le plus demandé",
+    },
+    {
+      name: "Sur-Mesure",
+      target: "L'expérience complète & immersive",
+      features: ["Tout le pack Mariage inclus", "Son & lumières haut de gamme", "Effets scéniques (fumée, LED, laser)", "DJ set prolongé", "Installation & démontage complets"],
+    },
   ];
 
   return (
-    <section id="offres" className="bg-[#242424] py-24">
-      <div className="max-w-6xl mx-auto px-6">
+    <section id="offres" style={{ padding: "120px 0", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
         <Reveal>
-          <p className="text-sm font-semibold text-[#00F5A0] uppercase tracking-wider text-center mb-3">Formules</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-4">Une offre adaptée à chaque événement</h2>
-          <p className="text-neutral-500 text-center mb-14 max-w-xl mx-auto">Choisissez la formule qui vous correspond.</p>
+          <div style={{ marginBottom: 64 }}>
+            <p className="section-label">Formules</p>
+            <h2 className="section-title">Une offre adaptée<br />à chaque événement</h2>
+          </div>
         </Reveal>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+
+        <div className="pricing-grid">
           {packs.map((pack, i) => (
             <Reveal key={pack.name} delay={i + 1}>
-              <div className={`relative rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2 ${
-                pack.highlighted
-                  ? "bg-gradient-to-br from-[#00F5A0] to-[#00D9F5] text-[#2D2D2D] shadow-2xl shadow-[#00F5A0]/20 md:-my-4 animate-gradient"
-                  : "bg-[#353535] text-white border border-white/5 card-glow hover:shadow-xl hover:shadow-[#00F5A0]/5"
-              }`}>
-                {pack.badge && (
-                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-bold uppercase tracking-wider bg-[#2D2D2D] text-[#00F5A0] rounded-full whitespace-nowrap shadow-lg border border-[#00F5A0]/20">
-                    {pack.badge}
-                  </span>
+              <div className={`pricing-card${pack.highlighted ? " pricing-card--featured" : ""}`}
+                style={pack.highlighted ? {
+                  border: "1px solid #7C3AED",
+                  boxShadow: "0 0 60px rgba(124,58,237,0.25), inset 0 0 60px rgba(124,58,237,0.05)",
+                } : {}}>
+                {pack.highlighted && (
+                  <div style={{
+                    position: "absolute", top: 0, left: 0, right: 0, height: 2,
+                    background: "linear-gradient(90deg, #7C3AED, #9B5CF6)",
+                  }} />
                 )}
-                <h3 className="text-xl font-bold mb-1 mt-2">Pack {pack.name}</h3>
-                <p className={`text-sm mb-5 ${pack.highlighted ? "text-[#2D2D2D]/70" : "text-neutral-500"}`}>{pack.target}</p>
-                <p className="text-3xl font-extrabold mb-1">{pack.price}</p>
-                <p className={`text-xs mb-7 ${pack.highlighted ? "text-[#2D2D2D]/60" : "text-neutral-600"}`}>Tarif ajusté selon votre événement</p>
-                <ul className="space-y-3 mb-8">
-                  {pack.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-sm">
-                      <svg className={`w-5 h-5 flex-shrink-0 mt-0.5 ${pack.highlighted ? "text-[#2D2D2D]" : "text-[#00F5A0]"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                {pack.badge && (
+                  <div style={{
+                    position: "absolute", top: 18, right: 18,
+                    padding: "3px 10px", borderRadius: 100,
+                    background: "rgba(124,58,237,0.15)",
+                    border: "1px solid rgba(155,92,246,0.25)",
+                    fontSize: 11, fontWeight: 600, color: "#C4B5FD", letterSpacing: "0.3px",
+                  }}>
+                    {pack.badge}
+                  </div>
+                )}
+                <p style={{ fontSize: 11, fontWeight: 600, color: pack.highlighted ? "#9B5CF6" : "#3F3F46", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 6 }}>
+                  Pack {pack.name}
+                </p>
+                <p style={{ fontSize: 13, color: "#3F3F46", marginBottom: 24, lineHeight: 1.5 }}>{pack.target}</p>
+
+                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 32px", display: "flex", flexDirection: "column", gap: 11, flex: 1 }}>
+                  {pack.features.map(f => (
+                    <li key={f} style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 14, color: "#71717A" }}>
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: 2 }}>
+                        <path d="M3 8l3.5 3.5L13 5" stroke={pack.highlighted ? "#9B5CF6" : "#3F3F46"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                       {f}
                     </li>
                   ))}
                 </ul>
-                <button onClick={scrollToForm} className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] ${
-                  pack.highlighted
-                    ? "bg-[#2D2D2D] text-[#00F5A0] hover:bg-[#242424] shadow-lg"
-                    : "bg-gradient-to-r from-[#00F5A0] to-[#00D9F5] text-[#2D2D2D] hover:shadow-lg hover:shadow-[#00F5A0]/20"
-                }`}>
+
+                <button onClick={scrollToContact} className={pack.highlighted ? "btn-primary" : "btn-outline"} style={{ width: "100%", padding: "11px", fontSize: 14 }}>
                   Demander un devis
                 </button>
               </div>
@@ -307,33 +417,55 @@ function Offres() {
   );
 }
 
-/* ─────────────────── DIFFÉRENCIATION ──────────────────── */
+/* ── DIFFÉRENCIATION ───────────────────────────────────────────────────────── */
 function Differenciation() {
   const points = [
-    { icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />, title: "Playlist sur-mesure", text: "On prépare ensemble la musique qui vous ressemble." },
-    { icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />, title: "Ponctualité & rigueur", text: "Installation en avance, gestion du timing, zéro stress." },
-    { icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />, title: "Un seul interlocuteur", text: "Un contact unique, réactif, impliqué de A à Z." },
-    { icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />, title: "Matériel professionnel", text: "Son puissant, jeux de lumières, rendu soigné." },
+    {
+      title: "Playlist sur-mesure",
+      text: "On prépare ensemble la musique qui vous ressemble.",
+      icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />,
+    },
+    {
+      title: "Ponctualité & rigueur",
+      text: "Installation en avance, gestion du timing, zéro stress.",
+      icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />,
+    },
+    {
+      title: "Un seul interlocuteur",
+      text: "Un contact unique, réactif, impliqué de A à Z.",
+      icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />,
+    },
+    {
+      title: "Matériel professionnel",
+      text: "Son puissant, jeux de lumières, rendu soigné.",
+      icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />,
+    },
   ];
 
   return (
-    <section className="bg-[#2D2D2D] py-24">
-      <div className="max-w-5xl mx-auto px-6">
+    <section style={{ padding: "120px 0", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
         <Reveal>
-          <p className="text-sm font-semibold text-[#00F5A0] uppercase tracking-wider text-center mb-3">Pourquoi nous</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-14">Ce qui fait la différence</h2>
+          <div style={{ marginBottom: 64 }}>
+            <p className="section-label">Pourquoi nous</p>
+            <h2 className="section-title">Ce qui fait<br /><span style={{ color: "#9B5CF6" }}>la différence.</span></h2>
+          </div>
         </Reveal>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 1, background: "rgba(255,255,255,0.06)", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
           {points.map((p, i) => (
             <Reveal key={p.title} delay={i + 1}>
-              <div className="flex gap-5 p-6 rounded-2xl bg-[#353535] border border-white/5 card-glow hover:shadow-xl hover:shadow-[#00F5A0]/5 transition-all duration-300 group hover:-translate-y-1">
-                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-[#00F5A0]/10 group-hover:bg-gradient-to-br group-hover:from-[#00F5A0] group-hover:to-[#00D9F5] transition-all duration-300">
-                  <svg className="w-6 h-6 text-[#00F5A0] group-hover:text-[#2D2D2D] transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">{p.icon}</svg>
+              <div className="feature-cell">
+                <div style={{
+                  width: 34, height: 34, borderRadius: 8,
+                  background: "rgba(124,58,237,0.1)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  marginBottom: 20, color: "#9B5CF6", flexShrink: 0,
+                }}>
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">{p.icon}</svg>
                 </div>
-                <div>
-                  <h3 className="font-bold text-white mb-1">{p.title}</h3>
-                  <p className="text-neutral-500 text-sm leading-relaxed">{p.text}</p>
-                </div>
+                <h3 style={{ fontSize: 14, fontWeight: 600, color: "#EBEBEF", marginBottom: 8 }}>{p.title}</h3>
+                <p style={{ fontSize: 13, color: "#525252", lineHeight: 1.6 }}>{p.text}</p>
               </div>
             </Reveal>
           ))}
@@ -343,7 +475,7 @@ function Differenciation() {
   );
 }
 
-/* ──────────────────── AVIS CLIENTS ────────────────────── */
+/* ── AVIS ──────────────────────────────────────────────────────────────────── */
 function Avis() {
   const temoignages = [
     { name: "Malena E.", text: "Un immense merci à notre DJ Max pour cette soirée absolument mémorable ! L'ambiance était parfaite du début à la fin. Il a su lire la foule à la perfection et créer une énergie incroyable." },
@@ -355,35 +487,46 @@ function Avis() {
   ];
 
   return (
-    <section id="avis" className="bg-[#242424] py-24">
-      <div className="max-w-6xl mx-auto px-6">
+    <section id="avis" style={{ padding: "120px 0", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
         <Reveal>
-          <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-              <svg className="w-4 h-4" viewBox="0 0 24 24">
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 24, marginBottom: 64 }}>
+            <div>
+              <p className="section-label">Témoignages</p>
+              <h2 className="section-title">Ils nous ont fait confiance</h2>
+            </div>
+            <div style={{
+              display: "flex", alignItems: "center", gap: 10,
+              padding: "8px 14px",
+              border: "1px solid rgba(255,255,255,0.06)",
+              borderRadius: 8,
+            }}>
+              <svg width="15" height="15" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
               </svg>
-              <span className="text-sm font-semibold text-neutral-300">5/5 sur Google — 6 avis</span>
+              <span style={{ fontSize: 13, color: "#52525B", fontWeight: 500 }}>5/5 · 6 avis Google</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Ils nous ont fait confiance</h2>
           </div>
         </Reveal>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: "rgba(255,255,255,0.06)", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
           {temoignages.map((t, i) => (
-            <Reveal key={t.name} delay={Math.min(i + 1, 5)}>
-              <div className="p-6 rounded-2xl bg-[#353535] border border-white/5 card-glow hover:shadow-xl hover:shadow-[#00F5A0]/5 transition-all duration-300 hover:-translate-y-1">
-                <div className="flex gap-0.5 mb-4">
+            <Reveal key={t.name} delay={Math.min(i + 1, 4)}>
+              <div className="review-cell">
+                <div style={{ display: "flex", gap: 2, marginBottom: 16 }}>
                   {[...Array(5)].map((_, j) => (
-                    <svg key={j} className="w-4 h-4 text-[#00F5A0]" fill="currentColor" viewBox="0 0 20 20">
+                    <svg key={j} width="13" height="13" fill="#7C3AED" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   ))}
                 </div>
-                <p className="text-neutral-300 text-sm leading-relaxed mb-5">"{t.text}"</p>
-                <p className="font-semibold text-white text-sm">{t.name}</p>
+                <p style={{ fontSize: 22, color: "#FFFFFF", lineHeight: 1.5, marginBottom: 20, fontWeight: 700 }}>
+                  "{t.text}"
+                </p>
+                <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>{t.name}</p>
               </div>
             </Reveal>
           ))}
@@ -393,32 +536,34 @@ function Avis() {
   );
 }
 
-/* ───────────────────── PROCESSUS ──────────────────────── */
+/* ── PROCESSUS ─────────────────────────────────────────────────────────────── */
 function Process() {
   const steps = [
-    { num: "1", title: "Demande", text: "Remplissez le formulaire avec les détails de votre événement.", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /> },
-    { num: "2", title: "Disponibilité", text: "On vérifie le planning et on revient vers vous sous 24h.", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /> },
-    { num: "3", title: "Échange", text: "On discute de vos envies, de l'ambiance, du déroulé.", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /> },
-    { num: "4", title: "Proposition", text: "Devis clair, détaillé, sans engagement.", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> },
+    { num: "01", title: "Demande", text: "Remplissez le formulaire avec les détails de votre événement." },
+    { num: "02", title: "Disponibilité", text: "On vérifie le planning et on revient vers vous sous 24h." },
+    { num: "03", title: "Échange", text: "On discute de vos envies, de l'ambiance, du déroulé." },
+    { num: "04", title: "Proposition", text: "Devis clair, détaillé, sans engagement." },
   ];
 
   return (
-    <section className="bg-[#2D2D2D] py-24">
-      <div className="max-w-5xl mx-auto px-6">
+    <section style={{ padding: "120px 0 60px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
         <Reveal>
-          <p className="text-sm font-semibold text-[#00F5A0] uppercase tracking-wider text-center mb-3">Processus</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-14">Comment ça fonctionne</h2>
+          <div style={{ marginBottom: 64 }}>
+            <p className="section-label">Processus</p>
+            <h2 className="section-title">Comment ça fonctionne</h2>
+          </div>
         </Reveal>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
           {steps.map((s, i) => (
             <Reveal key={s.num} delay={i + 1}>
-              <div className="relative p-6 rounded-2xl bg-[#353535] border border-white/5 text-center group card-glow hover:shadow-xl hover:shadow-[#00F5A0]/5 transition-all duration-300 hover:-translate-y-1">
-                <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center rounded-xl bg-[#00F5A0]/10 group-hover:bg-gradient-to-br group-hover:from-[#00F5A0] group-hover:to-[#00D9F5] transition-all duration-300">
-                  <svg className="w-6 h-6 text-[#00F5A0] group-hover:text-[#2D2D2D] transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">{s.icon}</svg>
-                </div>
-                <span className="text-xs font-bold text-[#00F5A0] uppercase tracking-wider">Étape {s.num}</span>
-                <h3 className="font-bold text-white mt-1 mb-2">{s.title}</h3>
-                <p className="text-neutral-500 text-sm leading-relaxed">{s.text}</p>
+              <div className="process-step" data-first={i === 0 ? "true" : "false"}>
+                <p style={{ fontSize: 28, fontWeight: 800, color: "rgba(255,255,255,0.15)", letterSpacing: "-0.04em", lineHeight: 1, marginBottom: 16, userSelect: "none" }}>
+                  {s.num}
+                </p>
+                <p style={{ fontSize: 15, fontWeight: 600, color: "#EBEBEF", marginBottom: 8 }}>{s.title}</p>
+                <p style={{ fontSize: 13, color: "#525252", lineHeight: 1.6 }}>{s.text}</p>
               </div>
             </Reveal>
           ))}
@@ -428,22 +573,38 @@ function Process() {
   );
 }
 
-/* ───────────────────── URGENCE ─────────────────────────── */
+/* ── URGENCE ───────────────────────────────────────────────────────────────── */
 function Urgence() {
   return (
-    <section className="bg-[#242424] py-20">
-      <div className="max-w-3xl mx-auto px-6 text-center">
+    <section style={{ padding: "120px 0", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ maxWidth: 760, margin: "0 auto", padding: "0 24px", textAlign: "center" }}>
         <Reveal>
-          <div className="relative p-10 sm:p-14 rounded-3xl bg-gradient-to-br from-[#00F5A0] to-[#00D9F5] text-[#2D2D2D] overflow-hidden animate-gradient">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 animate-float-1" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 animate-float-2" />
-            <div className="relative z-10">
-              <svg className="w-10 h-10 mx-auto mb-5 text-[#2D2D2D]/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p className="text-xl sm:text-2xl font-bold mb-3">Certaines dates sont réservées plusieurs semaines à l'avance</p>
-              <p className="text-[#2D2D2D]/70 mb-8 max-w-md mx-auto">Plus tôt vous nous contactez, plus on pourra personnaliser votre prestation.</p>
-              <button onClick={scrollToForm} className="px-8 py-4 bg-[#2D2D2D] text-[#00F5A0] font-bold rounded-2xl text-lg hover:bg-[#242424] transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] shadow-xl">
+          <div style={{
+            padding: "64px 48px",
+            border: "1px solid rgba(124,58,237,0.18)",
+            borderRadius: 16,
+            background: "rgba(124,58,237,0.04)",
+            position: "relative",
+            overflow: "hidden",
+          }}>
+            <div style={{
+              position: "absolute", inset: 0, pointerEvents: "none",
+              background: "radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.1) 0%, transparent 60%)",
+            }} />
+            <div style={{ position: "relative" }}>
+              <p className="section-label" style={{ textAlign: "center" }}>Disponibilités</p>
+              <h2 style={{
+                fontSize: "clamp(22px, 3.5vw, 34px)",
+                fontWeight: 800, color: "#EBEBEF",
+                letterSpacing: "-0.03em", lineHeight: 1.2,
+                marginBottom: 12,
+              }}>
+                Certaines dates sont réservées<br />plusieurs semaines à l'avance
+              </h2>
+              <p style={{ fontSize: 15, color: "#525252", marginBottom: 36, maxWidth: 400, margin: "0 auto 36px" }}>
+                Plus tôt vous nous contactez, plus on pourra personnaliser votre prestation.
+              </p>
+              <button onClick={scrollToContact} className="btn-primary" style={{ padding: "13px 32px", fontSize: 15 }}>
                 Vérifier la disponibilité
               </button>
             </div>
@@ -454,56 +615,81 @@ function Urgence() {
   );
 }
 
-/* ──────────────────── FORMULAIRE ──────────────────────── */
+/* ── FORMULAIRE ────────────────────────────────────────────────────────────── */
 function Formulaire() {
-  const [form, setForm] = useState({ nom: "", telephone: "", email: "", date: "", type: "", personnes: "" });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", date: "", event_type: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const handleSubmit = (e) => { e.preventDefault(); console.log("Formulaire soumis :", form); setSubmitted(true); };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const res = await fetch("https://formspree.io/f/xdayabev", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ ...form, _subject: "Nouvelle demande de devis — MK Sound" }),
+      });
+      if (res.ok) setSubmitted(true);
+    } catch {
+      // silent fail
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (submitted) {
     return (
-      <section id="contact" className="bg-[#2D2D2D] py-24">
-        <div className="max-w-2xl mx-auto px-6 text-center">
-          <div className="p-12 rounded-2xl bg-[#353535] border border-white/5">
-            <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full bg-[#00F5A0]/10">
-              <svg className="w-8 h-8 text-[#00F5A0]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+      <section id="contact" style={{ padding: "120px 0", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ maxWidth: 560, margin: "0 auto", padding: "0 24px", textAlign: "center" }}>
+          <div style={{ padding: "64px 48px", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16 }}>
+            <div style={{
+              width: 44, height: 44, background: "rgba(124,58,237,0.12)", borderRadius: "50%",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              margin: "0 auto 20px",
+            }}>
+              <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#9B5CF6" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-3">Demande envoyée !</h2>
-            <p className="text-neutral-400">On revient vers vous sous 24h pour vérifier la disponibilité de votre date.</p>
+            <p style={{ fontSize: 20, color: "#FFFFFF", textAlign: "center", padding: 40 }}>&#10003; Votre demande a bien été envoyée ! Nous vous répondons sous 24h.</p>
           </div>
         </div>
       </section>
     );
   }
 
-  const inputClass = "w-full px-4 py-3.5 rounded-xl bg-[#2D2D2D] border border-white/10 text-white placeholder-neutral-500 focus:outline-none focus:border-[#00F5A0]/50 focus:ring-2 focus:ring-[#00F5A0]/10 transition-all text-sm";
-
   return (
-    <section id="contact" className="bg-[#2D2D2D] py-24">
-      <div className="max-w-2xl mx-auto px-6">
+    <section id="contact" style={{ padding: "120px 0", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ maxWidth: 600, margin: "0 auto", padding: "0 24px" }}>
         <Reveal>
-          <p className="text-sm font-semibold text-[#00F5A0] uppercase tracking-wider text-center mb-3">Contact</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-4">Vérifier la disponibilité</h2>
-          <p className="text-neutral-500 text-center mb-10 max-w-xl mx-auto">Remplissez ce formulaire, on vous répond sous 24h.</p>
+          <div style={{ marginBottom: 48 }}>
+            <p className="section-label">Contact</p>
+            <h2 className="section-title">Vérifier la disponibilité</h2>
+            <p style={{ fontSize: 15, color: "#525252", marginTop: 12 }}>Remplissez ce formulaire, on vous répond sous 24h.</p>
+          </div>
         </Reveal>
+
         <Reveal delay={1}>
-          <form onSubmit={handleSubmit} className="p-8 sm:p-10 rounded-2xl bg-[#353535] border border-white/5 space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <input type="text" name="nom" placeholder="Votre nom" required value={form.nom} onChange={handleChange} className={inputClass} />
-              <input type="tel" name="telephone" placeholder="Téléphone" required value={form.telephone} onChange={handleChange} className={inputClass} />
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <input type="hidden" name="_subject" value="Nouvelle demande de devis — MK Sound" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <input type="text" name="name" placeholder="Votre nom" required value={form.name} onChange={handleChange} className="form-input" />
+              <input type="tel" name="phone" placeholder="Téléphone" required value={form.phone} onChange={handleChange} className="form-input" />
             </div>
-            <input type="email" name="email" placeholder="Adresse email" required value={form.email} onChange={handleChange} className={inputClass} />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <input type="date" name="date" required value={form.date} onChange={handleChange} className={inputClass} />
-              <select name="type" required value={form.type} onChange={handleChange} className={inputClass}>
-                <option value="" disabled>Type d'événement</option>
-                {EVENT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+            <input type="email" name="email" placeholder="Adresse email" required value={form.email} onChange={handleChange} className="form-input" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <input type="date" name="date" required value={form.date} onChange={handleChange} className="form-input" style={{ colorScheme: "dark" }} />
+              <select name="event_type" required value={form.event_type} onChange={handleChange} className="form-input form-select" style={{ color: form.event_type ? "#EBEBEF" : "#525252" }}>
+                <option value="" disabled style={{ background: "#0D1020" }}>Type d'événement</option>
+                {EVENT_TYPES.map(t => <option key={t} value={t} style={{ background: "#0D1020" }}>{t}</option>)}
               </select>
             </div>
-            <input type="number" name="personnes" placeholder="Nombre de personnes estimé" min="1" required value={form.personnes} onChange={handleChange} className={inputClass} />
-            <GradientButton type="submit" className="w-full">Envoyer ma demande</GradientButton>
-            <p className="text-neutral-600 text-xs text-center">Sans engagement. Réponse garantie sous 24h.</p>
+            <textarea name="message" placeholder="Détails sur votre événement (lieu, nombre de personnes, ambiance souhaitée...)" rows={4} value={form.message} onChange={handleChange} className="form-input" style={{ resize: "vertical" }} />
+            <button type="submit" disabled={submitting} className="btn-primary" style={{ padding: "13px", fontSize: 15, marginTop: 6, width: "100%", border: "none", borderRadius: 8, cursor: "pointer", opacity: submitting ? 0.6 : 1 }}>
+              {submitting ? "Envoi en cours…" : "Envoyer ma demande"}
+            </button>
+            <p style={{ fontSize: 12, color: "#27272A", textAlign: "center" }}>Sans engagement. Réponse garantie sous 24h.</p>
           </form>
         </Reveal>
       </div>
@@ -511,41 +697,41 @@ function Formulaire() {
   );
 }
 
-/* ──────────────────── FOOTER ──────────────────────────── */
+/* ── FOOTER ────────────────────────────────────────────────────────────────── */
 function Footer() {
   return (
-    <footer className="bg-[#242424] border-t border-white/5 py-12">
-      <div className="max-w-5xl mx-auto px-6 text-center">
-        <div className="flex items-center justify-center gap-2.5 mb-3">
-          <MKLogo size={30} />
-          <span className="font-bold text-white text-lg tracking-tight">MK Évènementiel</span>
-        </div>
-        <p className="text-neutral-500 text-sm">DJ & animation événementielle — Pas-de-Calais & Hauts-de-France</p>
-        <p className="text-neutral-700 text-xs mt-6">© {new Date().getFullYear()} MK Évènementiel. Tous droits réservés.</p>
+    <footer style={{
+      borderTop: "1px solid rgba(255,255,255,0.06)",
+      padding: "40px 24px",
+    }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+        <Logo small />
+        <p style={{ fontSize: 13, color: "#3F3F46" }}>DJ & animation événementielle — Pas-de-Calais & Hauts-de-France</p>
+        <p style={{ fontSize: 12, color: "#27272A" }}>© {new Date().getFullYear()} MK Évènementiel</p>
       </div>
     </footer>
   );
 }
 
-/* ──────────────── BOUTON STICKY MOBILE ────────────────── */
+/* ── STICKY MOBILE CTA ─────────────────────────────────────────────────────── */
 function StickyMobileCTA() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-[#2D2D2D] via-[#2D2D2D]/95 to-transparent md:hidden">
-      <button onClick={scrollToForm} className="w-full py-4 bg-gradient-to-r from-[#00F5A0] to-[#00D9F5] text-[#2D2D2D] font-bold rounded-2xl text-lg shadow-xl shadow-[#00F5A0]/20 active:scale-[0.98] transition-transform">
+    <div className="sticky-cta">
+      <button onClick={scrollToContact} className="btn-primary" style={{ width: "100%", padding: 14, fontSize: 15, border: "none", borderRadius: 10, cursor: "pointer" }}>
         Vérifier la disponibilité
       </button>
     </div>
   );
 }
 
-/* ──────────────────────── APP ──────────────────────────── */
+/* ── APP ───────────────────────────────────────────────────────────────────── */
 export default function App() {
   return (
-    <div className="bg-[#2D2D2D] min-h-screen">
+    <div style={{ background: "#111218", minHeight: "100vh" }}>
       <Nav />
-      <Hero />
+      <VideoHero />
+      <Marquee />
       <SocialProof />
-      <Video />
       <Offres />
       <Differenciation />
       <Avis />
